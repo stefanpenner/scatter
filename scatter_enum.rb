@@ -1,4 +1,3 @@
-require 'thread'
 require 'timeout'
 require 'celluloid'
 
@@ -24,7 +23,7 @@ class Scatter
     @callables = callables
     @queue = Queue.new
     @timeout = 60
-    @pool = Worker.pool
+    @pool = Celluloid::Actor[:scatter_pool] ||= Worker.pool
   end
 
   def each(&block)
@@ -53,7 +52,6 @@ private
     end
   end
 end
-
 
 def scatter(*actions)
   Scatter.new(*actions)
